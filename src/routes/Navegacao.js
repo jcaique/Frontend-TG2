@@ -24,7 +24,7 @@ function Navegacao() {
           name='NovoLogin'
           component={NovoLogin}
           options={{
-            title: 'Cadastrar'
+            title: 'Criar Conta'
           }}
         />
 
