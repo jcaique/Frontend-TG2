@@ -1,8 +1,9 @@
+import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar'
 import React, { useState } from 'react'
-import { Text, View, StyleSheet } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import { TextInput, FAB, HelperText, ActivityIndicator, ProgressBar } from 'react-native-paper'
 
-import BACKEND from '../../constants'
+import {BACKEND} from '../../constants'
 
 function NovoLogin(props) {
   const [mostraSenha, setSetMostraSenha] = useState(true)
@@ -10,6 +11,8 @@ function NovoLogin(props) {
   const [senha, setSenha] = useState('')
   const [confirmaSenha, setConfirmaSenha] = useState('')
   const [erros, setErros] = useState({})
+  const [status, setStatus] = useState('') //mostrar mensagem do back para o usuário
+  const [criandoConta, setCriandoConta] = useState(false)
 
   async function CriaConta() {
     let errosOcorridos = validaErrosLogin()
@@ -17,13 +20,36 @@ function NovoLogin(props) {
     if (Object.keys(errosOcorridos).length > 0) {
       setErros(errosOcorridos)
 
-      setTimeout(() => {setErros({})}, 5000);
-    } else {
-      let metodo = 'POST' //se preciso futuramente, fazer condicionalmente
+      //para remover os alertas depois de 5 segundos
+      setTimeout(() => setErros({}), 5000);
+    }
+    else {
+      //let metodo = 'POST' //se preciso futuramente, fazer condicionalmente
       let novoLogin = { login: usuario, senha: senha }
 
-      let url = `${BACKEND}/`
-
+      let url = `${BACKEND}/login`;
+      console.log(url)
+      
+      setCriandoConta(true)
+      await fetch(url, {
+        mode: 'cors',
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(novoLogin)
+      }).then(response => response.json())
+        .then(response => {
+          response.status === 200 ? props.navigation.navigate('Login') : setStatus(response.message);
+          
+          setTimeout(() => setStatus(''), 5000)
+        })
+        .catch(function (error) {
+          console.error('Erro ao criar login.' + '\n' + error.message + '\n' + error.status);
+          setStatus('Houve erro ao fazer a solicitação. ' + error.status + ' ' + error.message)
+        })
+      setCriandoConta(false)
     }
   }
 
@@ -33,8 +59,8 @@ function NovoLogin(props) {
     if (usuario.trim() === '') errosPossiveis.usuario = 'Informe o nome de usuário.'
     if (senha.length < 8 && senha.trim() !== '') errosPossiveis.senha = 'Senha com no mínimo 8 caracteres.'
     if (senha.trim() === '') errosPossiveis.senha = 'Informe a senha.'
-    if (senha !== confirmaSenha && confirmaSenha.trim() !== '') errosPossiveis.confirmaSenha = 'Senhas divergentes.'
-    
+    if (senha !== confirmaSenha && confirmaSenha.trim() !== '') errosPossiveis.confirmaSenha = 'Senhas diferentes.'
+
     console.log(errosPossiveis.usuario)
     console.log(errosPossiveis.senha)
     console.log(errosPossiveis.confirmaSenha)
@@ -111,21 +137,31 @@ function NovoLogin(props) {
           type='error'
           style={estilos.helper}
           visible={!!erros.confirmaSenha}
-          >{erros.confirmaSenha}
+        >{erros.confirmaSenha}
         </HelperText>
 
-          <Text>{usuario + ' ' + senha}</Text>
+        <HelperText
+          type='error'
+          style={estilos.helper}
+          visible={!!status}
+        >{status}            
+        </HelperText>
       </View>
-
 
       <View style={estilos.boxBotoes}>
         <FAB
-          label='Salvar'
+          label='Cadastrar'
           icon='content-save'
-          style={estilos.FAB}
+          style={estilos.fab}
           onPress={() => { CriaConta() }}
         />
       </View>
+
+      <ActivityIndicator 
+        color='#0000cd' 
+        animating={criandoConta} 
+        size='large'  
+        style={estilos.load}/>
     </View>
   )
 }
@@ -135,11 +171,11 @@ const estilos = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#32a',
+    // backgroundColor: '#32a',
   },
 
   boxDados: {
-    backgroundColor: '#ee0',
+    // backgroundColor: '#ee0',
     width: '90%',
   },
 
@@ -150,7 +186,7 @@ const estilos = StyleSheet.create({
   },
 
   boxBotoes: {
-    backgroundColor: '#a00',
+    // backgroundColor: '#a00',
     width: '90%',
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -162,11 +198,15 @@ const estilos = StyleSheet.create({
     padding: '2%'
   },
 
-  helper:{
-    left:'1%',
-    fontFamily:'Roboto',
-    marginTop:-10
-  } 
+  helper: {
+    left: '1%',
+    fontFamily: 'Roboto',
+    marginTop: -10
+  },
+
+  load:{
+    top: '-25%'
+  }
 
 })
 

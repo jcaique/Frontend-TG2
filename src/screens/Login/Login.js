@@ -29,12 +29,12 @@ function Login(props) {
       .then(data => {
         data.status === 200 ? props.navigation.navigate('Menu') : setAviso(true)
       })
-      .catch(function (error){
+      .catch(function (error) {
         //implementar erro da aplicação 
         console.error('Erro ao entrar.\n' + error.message + '\n' + error.status)
       })
 
-      setEntrando(false)
+    setEntrando(false)
   }
 
   return (
@@ -78,7 +78,7 @@ function Login(props) {
           visible={aviso}> Usuário/Senha inválidos.
         </HelperText>
 
-        <ActivityIndicator color='#0000cd' animating={entrando}/>
+        <ActivityIndicator color='#0000cd' animating={entrando} />
       </View>
 
       <View style={estilos.boxBotoes}>
@@ -86,7 +86,7 @@ function Login(props) {
           style={estilos.fab}
           icon='login-variant'
           label='Entrar'
-          onPress={() => {Logar()}}
+          onPress={() => { Logar() }}
           disabled={!(usuario.length > 0 && senha.length > 0)}
         />
 
