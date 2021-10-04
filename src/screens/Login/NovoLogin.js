@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native'
 import { TextInput, FAB, HelperText, ActivityIndicator, ProgressBar } from 'react-native-paper'
 
 import {BACKEND} from '../../constants'
+import estilos from '../../themes/Estilos'
 
 function NovoLogin(props) {
   const [mostraSenha, setSetMostraSenha] = useState(true)
@@ -71,7 +72,7 @@ function NovoLogin(props) {
     <View style={estilos.boxTela}>
       <View style={estilos.boxDados}>
         <TextInput
-          style={estilos.inputs}
+          style={estilos.input}
           label='Nome de usuário'
           placeholder='Insira o nome de usuário'
           underlineColor='#0000cd'
@@ -90,7 +91,7 @@ function NovoLogin(props) {
         </HelperText>
 
         <TextInput
-          style={estilos.inputs}
+          style={estilos.input}
           label='Senha'
           placeholder='Insira a senha'
           underlineColor='#0000cd'
@@ -115,7 +116,7 @@ function NovoLogin(props) {
         </HelperText>
 
         <TextInput
-          style={estilos.inputs}
+          style={estilos.input}
           label='Confirmar senha'
           placeholder='Reinsira a senha'
           underlineColor='#0000cd'
@@ -165,7 +166,7 @@ function NovoLogin(props) {
   )
 }
 
-const estilos = StyleSheet.create({
+/*const estilos = StyleSheet.create({
   boxTela: {
     flex: 1,
     alignItems: 'center',
@@ -207,6 +208,6 @@ const estilos = StyleSheet.create({
     top: '-25%'
   }
 
-})
+})*/
 
 export default NovoLogin;

@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { TextInput, FAB, HelperText, ActivityIndicator } from 'react-native-paper';
 
 import { BACKEND } from './../../constants'
+import estilos from '../../themes/Estilos';
 
 function Login(props) {
   const [senha, setSenha] = useState('');
@@ -101,7 +102,7 @@ function Login(props) {
   )
 }
 
-const estilos = StyleSheet.create({
+/*const estilos = StyleSheet.create({
   boxTela: {
     flex: 1,
     //backgroundColor: '#bff',
@@ -135,6 +136,6 @@ const estilos = StyleSheet.create({
     borderTopStartRadius: 10,
     elevation: 5
   }
-})
+})*/
 
 export default Login;
