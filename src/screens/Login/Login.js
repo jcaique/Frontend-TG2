@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 import { TextInput, FAB, HelperText, ActivityIndicator } from 'react-native-paper';
 
 import { BACKEND } from './../../constants'
@@ -28,7 +28,7 @@ function Login(props) {
       body: JSON.stringify(login)
     }).then(response => response.json())
       .then(data => {
-        data.status === 200 ? props.navigation.navigate('Menu') : setAviso(true)
+        data.status === 200 ? props.navigation.navigate('Sites', {idUsuario:data._id}) : setAviso(true)
       })
       .catch(function (error) {
         //implementar erro da aplicação 

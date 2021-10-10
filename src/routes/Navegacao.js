@@ -4,7 +4,9 @@ import { createStackNavigator } from '@react-navigation/stack'
 
 import Login from '../screens/Login/Login';
 import NovoLogin from '../screens/Login/NovoLogin';
-import Menu from '../screens/Menu/Menu';
+import Sites from '../screens/Sites/Sites';
+import Contas from '../screens/Contas/Contas';
+import NovaConta from '../screens/Contas/NovaContas';
 
 const Stack = createStackNavigator();
 
@@ -29,10 +31,26 @@ function Navegacao() {
         />
 
         <Stack.Screen 
-          name='Menu'
-          component={Menu}
+          name='Sites'
+          component={Sites}
           options={{
-            title: 'Menu?'
+            title: 'Websites'
+          }}
+        />
+
+        <Stack.Screen
+          name='Contas'
+          component={Contas}
+          options={{
+            title:'Suas Contas'
+          }}
+        />
+
+        <Stack.Screen
+          name='NovaConta'
+          component={NovaConta}
+          options={{
+            title:'Adicionar Conta'
           }}
         />
       </Stack.Navigator>

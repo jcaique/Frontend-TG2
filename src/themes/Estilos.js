@@ -27,6 +27,13 @@ const estilos = StyleSheet.create({
       backgroundColor: '#4b0082',
       width: 140,
     },
+
+    fabNovaCont:{
+      position:'absolute',
+      right:0,
+      bottom:0,
+      margin:16
+    },
   
     input: {
       margin: '5%',
