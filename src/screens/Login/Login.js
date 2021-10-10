@@ -85,17 +85,17 @@ function Login(props) {
       <View style={estilos.boxBotoes}>
         <FAB
           style={estilos.fab}
-          icon='login-variant'
-          label='Entrar'
-          onPress={() => { Logar() }}
-          disabled={!(usuario.length > 0 && senha.length > 0)}
+          icon='account-plus'
+          label='Criar Conta'
+          onPress={() => { props.navigation.navigate('NovoLogin') }}
         />
 
         <FAB
           style={estilos.fab}
-          icon='account-plus'
-          label='Criar Conta'
-          onPress={() => { props.navigation.navigate('NovoLogin') }}
+          icon='login-variant'
+          label='Entrar'
+          onPress={() => { Logar() }}
+          disabled={!(usuario.length > 0 && senha.length > 0)}
         />
       </View>
     </View>
