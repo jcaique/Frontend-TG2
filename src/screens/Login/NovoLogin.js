@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { View, StyleSheet } from 'react-native'
-import { TextInput, FAB, HelperText, ActivityIndicator, ProgressBar } from 'react-native-paper'
+import { View } from 'react-native'
+import { TextInput, FAB, HelperText, ActivityIndicator } from 'react-native-paper'
 
-import {BACKEND} from '../../constants'
+import { BACKEND } from '../../constants'
 import estilos from '../../themes/Estilos'
 
 function NovoLogin(props) {
@@ -29,7 +29,7 @@ function NovoLogin(props) {
 
       let url = `${BACKEND}/login`;
       console.log(url)
-      
+
       setCriandoConta(true)
       await fetch(url, {
         mode: 'cors',
@@ -42,7 +42,7 @@ function NovoLogin(props) {
       }).then(response => response.json())
         .then(response => {
           response.status === 200 ? props.navigation.navigate('Login') : setStatus(response.message);
-          
+
           setTimeout(() => setStatus(''), 5000)
         })
         .catch(function (error) {
@@ -144,7 +144,7 @@ function NovoLogin(props) {
           type='error'
           style={estilos.helper}
           visible={!!status}
-        >{status}            
+        >{status}
         </HelperText>
       </View>
 
@@ -157,57 +157,13 @@ function NovoLogin(props) {
         />
       </View>
 
-      <ActivityIndicator 
-        color='#0000cd' 
-        animating={criandoConta} 
-        size='large'  
-        style={estilos.load}/>
+      <ActivityIndicator
+        color='#0000cd'
+        animating={criandoConta}
+        size='large'
+        style={estilos.load} />
     </View>
   )
 }
-
-/*const estilos = StyleSheet.create({
-  boxTela: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    // backgroundColor: '#32a',
-  },
-
-  boxDados: {
-    // backgroundColor: '#ee0',
-    width: '90%',
-  },
-
-  fab: {
-    elevation: 8,
-    backgroundColor: '#4b0082',
-    width: 140,
-  },
-
-  boxBotoes: {
-    // backgroundColor: '#a00',
-    width: '90%',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: '1%',
-    padding: '1%'
-  },
-
-  inputs: {
-    padding: '2%'
-  },
-
-  helper: {
-    left: '1%',
-    fontFamily: 'Roboto',
-    marginTop: -10
-  },
-
-  load:{
-    top: '-25%'
-  }
-
-})*/
 
 export default NovoLogin;

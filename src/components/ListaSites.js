@@ -6,7 +6,7 @@ function ListaSites({ info, onPress }) {
     return (
         <>
 
-            <Card onPress={onPress} style={{marginVertical:4}}>
+            <Card onPress={onPress} style={{ marginVertical: 4 }}>
                 <Card.Title title={info.url} />
             </Card>
         </>

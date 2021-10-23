@@ -48,6 +48,15 @@ const estilos = StyleSheet.create({
         left: '1%',
         fontFamily: 'Roboto',
         marginTop: -10
+    },
+    modal:{
+      backgroundColor:'white',
+      padding:16,
+      margin:16
+    },
+    fabsmall: {
+        backgroundColor: '#4b0082',
+        marginHorizontal:8        
     }
   })
 
