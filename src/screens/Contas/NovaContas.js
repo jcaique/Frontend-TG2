@@ -12,10 +12,9 @@ export default function NovaConta(props) {
 
     /**
      * @todo
-     * O modal lesta lento
+     * O modal esta lento
      * o teclado ajusta o tamanho da tela e arrasta o botão | renderização condicional
-     * o teclado esconde os campos mais baixos | alterar posicionamento com foco?
-     * em alguns testes o app não cadastrava os dados (não incluia o site). funcionava depois de alguns testes sem modificar o codigo. não sei o motivo
+     * o teclado esconde os campos mais baixos | alterar posicionamento com foco? ou usar o componente View como pai ao invez do React.fragment
      */
 
     let { dono } = props.route.params
@@ -43,14 +42,67 @@ export default function NovaConta(props) {
         if (senha.trim() === '') errosPossiveis.senha = 'Informe a senha.'
         if (site.trim() === '') errosPossiveis.site = 'informe um site.'
 
-        console.log(errosPossiveis.username)
-        console.log(errosPossiveis.senha)
-        console.log(errosPossiveis.site)
+        //console.log(errosPossiveis.username)
+        //console.log(errosPossiveis.senha)
+        //console.log(errosPossiveis.site)
 
         return errosPossiveis
     }
 
     async function cadastraDados() {
+
+            let uri = `${BACKEND + '/contas/'}`
+
+            let info = {
+                dono: dono,
+                url: idSite,
+                login: username,
+                senha: senha
+            }
+
+            console.log('info:')
+            console.log(info)
+
+            await fetch(uri, {
+                mode: 'cors',
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(info)
+            })
+                .then(response => response.json())
+                .then(data => {
+
+                    if (data.messsage === undefined) {
+
+                        alert('cadastrado com sucesso')
+
+                    } else if (data.message === 'Uma conta com o mesmo nome ja existe') {
+
+                        alert(data.message)
+
+                    } else {
+
+                        alert(data.message[0].msg)
+
+                    }
+
+                    console.log(data)
+
+                })
+                .catch((err) => {
+                    alert(`ocorreu um erro ao cadastrar a conta: ${err.message}`)
+                })
+
+        
+
+        props.navigation.goBack()
+
+    }
+
+    async function cadastraSite() {
         let errosOcorridos = validaErrosLogin()
 
         if (Object.keys(errosOcorridos).length > 0) {
@@ -58,71 +110,35 @@ export default function NovaConta(props) {
 
             setTimeout(() => setErros({}), 5000);
 
-        }else{
+        } else {
 
-        await cadastraSite()
+            let uri = `${BACKEND + '/sites/'}`
 
-        let uri = `${BACKEND + '/contas/'}`
+            await fetch(uri, {
+                mode: 'cors',
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ url: site })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('data:')
+                    console.log(data)
 
-        let info = {
-            dono: dono,
-            url: idSite,
-            login: username,
-            senha: senha
+                    let { _id } = data
+
+                    setIdSite(_id)
+
+                })
+                .catch((err) => {
+                    console.error(`${'ocorreu um erro no cadastro do site: ' + err.message}`)
+                })
+
+            cadastraDados()
         }
-
-        console.log('info:')
-        console.log(info)
-
-        await fetch(uri, {
-            mode: 'cors',
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(info)
-        })
-            .then(response => response.json())
-            .then(data => {
-
-                alert(data.message===undefined?'cadastrado com sucesso':'Uma conta com o mesmo nome ja existe')
-                console.log(data)
-
-            })
-            .catch((err) => {
-                alert(`ocorreu um erro ao cadastrar a conta: ${err.message}`)
-            })
-
-        }
-
-        props.navigation.goBack()
-
-    }
-
-    async function cadastraSite() {
-        let uri = `${BACKEND + '/sites/'}`
-
-        await fetch(uri, {
-            mode: 'cors',
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ url: site })
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log('data:')
-                console.log(data)
-
-                setIdSite(data._id)
-            })
-            .catch((err) => {
-                console.error(`${'ocorreu um erro no cadastro do site: ' + err.message}`)
-            })
-
     }
 
     return (
@@ -210,16 +226,16 @@ export default function NovaConta(props) {
                         </HelperText>
                     </View>
 
-                    
-                        <FAB
-                            style={{...estilos.fabNovaCont,backgroundColor:estilos.fab.backgroundColor}}
-                            label='Cadastrar'
-                            icon='plus'
-                            onPress={() => {
-                                cadastraDados()
-                            }}
-                        />
-                    
+
+                    <FAB
+                        style={{ ...estilos.fabNovaCont, backgroundColor: estilos.fab.backgroundColor }}
+                        label='Cadastrar'
+                        icon='plus'
+                        onPress={() => {
+                            cadastraSite()
+                        }}
+                    />
+
 
                     {/*Modal */}
 
