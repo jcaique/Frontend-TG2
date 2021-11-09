@@ -34,11 +34,14 @@ function geraSenha(parametros) {
     }
 
     let senha = ''
-    for (i = 0; i < parametros.tamanho; i++) {
-
+    let i = 0
+    while(true){
+        if(i>=parametros.tamanho){
+            break
+        }
+        i++
         let num = Math.floor(Math.random() * (caracteres.length - 1))
         senha += caracteres.charAt(num)
-
     }
 
     return senha

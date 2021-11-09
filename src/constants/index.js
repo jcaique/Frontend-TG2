@@ -1,3 +1,3 @@
-import { BACKEND } from "./config";
+import { BACKEND,MAXSIZESENHA } from "./config";
 
-export { BACKEND }
+export { BACKEND,MAXSIZESENHA }

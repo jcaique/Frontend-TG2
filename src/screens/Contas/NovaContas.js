@@ -1,26 +1,23 @@
-import React, { useState } from "react"
-import { View, Text } from "react-native"
-import { TextInput, Modal, Portal, Provider, FAB, Checkbox, IconButton, HelperText } from "react-native-paper"
+import React, { useEffect, useState } from "react"
+import { View } from "react-native"
+import { TextInput, Modal, Portal, Provider, FAB, HelperText } from "react-native-paper"
 
 import estilos from "../../themes/Estilos"
 
-import geraSenha from '../../functions/GeraSenha'
+import ModalSenha from "../../components/ModalSenha"
 
-import { BACKEND } from "../../constants"
+import { BACKEND,MAXSIZESENHA } from "../../constants"
 
 export default function NovaConta(props) {
 
     /**
      * @todo
-     * O modal esta lento
      * o teclado ajusta o tamanho da tela e arrasta o botão | renderização condicional
-     * o teclado esconde os campos mais baixos | alterar posicionamento com foco? ou usar o componente View como pai ao invez do React.fragment
+     * o teclado esconde os campos mais baixos | alterar posicionamento com foco?
      */
 
     let { dono } = props.route.params
     const [idSite, setIdSite] = useState('')
-
-    const maxSizeSenha = 50 //o tamanho maximo da senha. inclusivo
 
     const [username, setUsername] = useState('')
     const [site, setSite] = useState('')
@@ -28,11 +25,10 @@ export default function NovaConta(props) {
     const [erros, setErros] = useState({})
 
     const [showModal, setShowModal] = useState(false)
-    const [tamanho, setTamanho] = useState(0)
-    const [maiusculas, setMaiusculas] = useState(true)
-    const [minusculas, setMinusculas] = useState(true)
-    const [numeros, setNumeros] = useState(true)
-    const [especiais, setEspeciais] = useState(false)
+
+    /*function setParamsSenha(newSenha){
+        setSenha(geraSenha(newSenha))
+    }*/
 
     const validaErrosLogin = () => {
         let errosPossiveis = {}
@@ -42,61 +38,52 @@ export default function NovaConta(props) {
         if (senha.trim() === '') errosPossiveis.senha = 'Informe a senha.'
         if (site.trim() === '') errosPossiveis.site = 'informe um site.'
 
-        //console.log(errosPossiveis.username)
-        //console.log(errosPossiveis.senha)
-        //console.log(errosPossiveis.site)
-
         return errosPossiveis
     }
 
     async function cadastraDados() {
 
-            let uri = `${BACKEND + '/contas/'}`
+        let uri = `${BACKEND + '/contas/'}`
 
-            let info = {
-                dono: dono,
-                url: idSite,
-                login: username,
-                senha: senha
-            }
+        let info = {
+            dono: dono,
+            url: idSite,
+            login: username,
+            senha: senha
+        }
 
-            console.log('info:')
-            console.log(info)
+        await fetch(uri, {
+            mode: 'cors',
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(info)
+        })
+            .then(response => response.json())
+            .then(data => {
 
-            await fetch(uri, {
-                mode: 'cors',
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(info)
+                if (data.messsage === undefined) {
+
+                    alert('cadastrado com sucesso')
+
+                } else if (data.message === 'Uma conta com o mesmo nome ja existe') {
+
+                    alert(data.message)
+
+                } else {
+
+                    alert(data.message[0].msg)
+
+                }
+
             })
-                .then(response => response.json())
-                .then(data => {
+            .catch((err) => {
+                alert(`ocorreu um erro ao cadastrar a conta: ${err.message}`)
+            })
 
-                    if (data.messsage === undefined) {
 
-                        alert('cadastrado com sucesso')
-
-                    } else if (data.message === 'Uma conta com o mesmo nome ja existe') {
-
-                        alert(data.message)
-
-                    } else {
-
-                        alert(data.message[0].msg)
-
-                    }
-
-                    console.log(data)
-
-                })
-                .catch((err) => {
-                    alert(`ocorreu um erro ao cadastrar a conta: ${err.message}`)
-                })
-
-        
 
         props.navigation.goBack()
 
@@ -125,8 +112,6 @@ export default function NovaConta(props) {
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('data:')
-                    console.log(data)
 
                     let { _id } = data
 
@@ -136,17 +121,20 @@ export default function NovaConta(props) {
                 .catch((err) => {
                     console.error(`${'ocorreu um erro no cadastro do site: ' + err.message}`)
                 })
-
-            cadastraDados()
         }
     }
+
+    useEffect(()=>{
+        if(idSite!==''){
+            cadastraDados()
+        }
+    },[idSite])
 
     return (
         <>
             <Provider>
                 <View style={{
                     flex: 1,
-                    flexDirection: 'column',
                     padding: 16
                 }}>
 
@@ -199,7 +187,7 @@ export default function NovaConta(props) {
 
                         <TextInput
                             label='Senha'
-                            maxLength={maxSizeSenha}
+                            maxLength={MAXSIZESENHA}
                             mode='flat'
                             onChangeText={senha => setSenha(senha)}
                             style={estilos.input}
@@ -241,136 +229,10 @@ export default function NovaConta(props) {
 
                     <Portal>
                         <Modal visible={showModal} onDismiss={() => setShowModal(false)} contentContainerStyle={estilos.modal}>
-                            <View style={{ flexDirection: 'column' }}>
-                                <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-
-                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-
-                                        <Text>Tamanho: </Text>
-                                        <Text >{tamanho}</Text>
-
-                                    </View>
-
-                                    <View >
-
-                                        <IconButton
-                                            icon='chevron-up'
-                                            onPress={() => setTamanho(tamanho + 1)}
-                                            disabled={tamanho < maxSizeSenha ? false : true}
-                                            //style={estilos.fabsmall}
-                                            size={36}
-                                        />
-                                        <IconButton
-                                            icon='chevron-down'
-                                            onPress={() => setTamanho(tamanho - 1)}
-                                            disabled={tamanho > 0 ? false : true}
-                                            //style={estilos.fabsmall}
-                                            size={36}
-                                        />
-
-                                    </View>
-
-                                    <View >
-
-                                        <IconButton
-                                            icon='chevron-double-up'
-                                            onPress={() => tamanho + 5 <= maxSizeSenha ? setTamanho(tamanho + 5) : setTamanho(maxSizeSenha)}
-                                            disabled={tamanho < maxSizeSenha ? false : true}
-                                            //style={estilos.fabsmall}
-                                            size={36}
-                                        />
-                                        <IconButton
-                                            icon='chevron-double-down'
-                                            onPress={() => tamanho - 5 >= 0 ? setTamanho(tamanho - 5) : setTamanho(0)}
-                                            disabled={tamanho > 0 ? false : true}
-                                            //style={estilos.fabsmall}
-                                            size={36}
-                                        />
-
-                                    </View>
-
-                                </View>
-                                <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 4 }}>
-
-                                    <View>
-
-                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-
-                                            <Text>Maiúsculas</Text>
-                                            <Checkbox
-                                                status={maiusculas ? 'checked' : 'unchecked'}
-                                                onPress={() => setMaiusculas(!maiusculas)}
-                                            />
-
-                                        </View>
-
-                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-
-                                            <Text>Minúsculas</Text>
-                                            <Checkbox
-                                                status={minusculas ? 'checked' : 'unchecked'}
-                                                onPress={() => setMinusculas(!minusculas)}
-                                            />
-
-                                        </View>
-
-                                    </View>
-
-                                    <View>
-
-                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-
-                                            <Text style={{ marginRight: 2 }}>Números</Text>
-                                            {/*a margem alinha as checkboxes */}
-                                            <Checkbox
-                                                status={numeros ? 'checked' : 'unchecked'}
-                                                onPress={() => setNumeros(!numeros)}
-                                            />
-
-                                        </View>
-
-                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-
-                                            <Text>Especiais</Text>
-                                            <Checkbox
-                                                status={especiais ? 'checked' : 'unchecked'}
-                                                onPress={() => setEspeciais(!especiais)}
-                                            />
-
-                                        </View>
-
-                                    </View>
-
-                                </View>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-
-                                    <FAB
-                                        style={estilos.fab}
-                                        onPress={() => setShowModal(false)}
-                                        label='Cancelar'
-                                        icon='close'
-                                    />
-                                    <FAB
-                                        style={estilos.fab}
-                                        onPress={() => {
-
-                                            let parametros = {
-                                                tamanho: tamanho,
-                                                maiusculas: maiusculas,
-                                                minusculas: minusculas,
-                                                numeros: numeros,
-                                                especiais: especiais
-                                            }
-                                            setSenha(geraSenha(parametros))
-                                            setShowModal(false)
-                                        }
-                                        }
-                                        label='Confirmar'
-                                        icon='check'
-                                    />
-
-                                </View>
-                            </View>
+                            <ModalSenha
+                                setSenha={setSenha}
+                                setShowModal={setShowModal}
+                            />
                         </Modal>
                     </Portal>
 

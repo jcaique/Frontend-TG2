@@ -102,40 +102,4 @@ function Login(props) {
   )
 }
 
-/*const estilos = StyleSheet.create({
-  boxTela: {
-    flex: 1,
-    //backgroundColor: '#bff',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-
-  boxDados: {
-    //backgroundColor: '#b01',
-    width: '90%'
-  },
-
-  boxBotoes: {
-    //backgroundColor: '#ee0',
-    width: '90%',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: '1%',
-    padding: '1%'
-  },
-
-  fab: {
-    elevation: 8,
-    backgroundColor: '#4b0082',
-    width: 140,
-  },
-
-  input: {
-    margin: '5%',
-    borderTopEndRadius: 10,
-    borderTopStartRadius: 10,
-    elevation: 5
-  }
-})*/
-
 export default Login;
